@@ -1,0 +1,1 @@
+GET https://phonebook-svc.fly.dev/api/persons
