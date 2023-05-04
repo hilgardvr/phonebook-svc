@@ -1,3 +1,4 @@
+const Person = require('./mongo')
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
@@ -48,7 +49,9 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/persons', (req, res) => {
-  res.json(persons)
+  Person.find({})
+    .then(persons => res.json(persons))
+  // res.json(persons)
 })
 
 app.get('/info', (req, res) => {
@@ -62,12 +65,22 @@ app.get('/info', (req, res) => {
 
 app.get('/api/persons/:id', (req, res) => {
   const id = req.params.id.toString()
-  const person = persons.find(p => p.id.toString() === id)
-  if (!person) {
-    res.status(404).end()
-  } else {
-    res.json(person)
-  }
+  console.log(id)
+  const person = Person.findById(id)
+    .then(person => {
+      console.log('personm', person)
+      res.json(person)
+    })
+    .catch(err => {
+      console.log(err)
+      res.status(404).end()
+    })
+  // const person = persons.find(p => p.id.toString() === id)
+  // if (!person) {
+  //   res.status(404).end()
+  // } else {
+  //   res.json(person)
+  // }
 })
 
 app.delete('/api/persons/:id', (req, res) => {
