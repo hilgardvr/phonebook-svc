@@ -103,20 +103,28 @@ app.post('/api/persons', (req, res) => {
       error: 'name or number missing'
     })
   }
-  const exsiting = persons.find(p => p.name === body.name)
-  if (exsiting) {
-    return res.status(400).json({
-      error: 'name already exists'
-    })
-  }
-  const id = generateId()
-  const person = {
-    id: id,
+  // const exsiting = persons.find(p => p.name === body.name)
+  // if (exsiting) {
+  //   return res.status(400).json({
+  //     error: 'name already exists'
+  //   })
+  // }
+  // const id = generateId()
+  // const person = {
+  //   id: id,
+  //   name: body.name,
+  //   number: body.number
+  // }
+  // persons = persons.concat(person)
+  const person = new Person({
     name: body.name,
     number: body.number
-  }
-  persons = persons.concat(person)
-  res.json(person)
+  })
+  person.save().then(savedPerson => {
+    res.json(savedPerson)
+  })
+  .catch(err => console.log(err))
+  // res.json(person)
 })
 
 
