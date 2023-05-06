@@ -58,19 +58,19 @@ app.get('/api/persons/:id', (req, res, next) => {
     })
 })
 
-app.put('/api/persons/:id', (req, res) => {
+app.put('/api/persons/:id', (req, res, next) => {
   const body = req.body
   console.log(body)
   const person = {
     name: body.name,
     number: body.number,
   }
-  Person.findByIdAndUpdate(req.params.id, person, { new: true } )
+  Person.findByIdAndUpdate(req.params.id, person, { new: true, runValidators: true, context: 'query' } )
     .then(updatedPerson => {
       console.log("updatedPerson", updatedPerson)
       res.json(updatedPerson)
     })
-    .catch(error => next(error))
+    .catch(err => next(err) )
 })
 
 app.delete('/api/persons/:id', (req, res) => {
@@ -105,6 +105,9 @@ const errorHandler = (error, req, res, next) => {
   console.error(`Error message: ${error.message}`)
   if (error && error.name == "CastError") {
     return res.status(400).send({error: 'malformed id'})
+  }
+  if (error && error.name == "ValidationError") {
+    return res.status(400).send({error: error.message})
   }
   next(error)
 }
