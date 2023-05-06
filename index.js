@@ -60,26 +60,24 @@ app.get('/api/persons/:id', (req, res, next) => {
 
 app.put('/api/persons/:id', (req, res, next) => {
   const body = req.body
-  console.log(body)
   const person = {
     name: body.name,
     number: body.number,
   }
   Person.findByIdAndUpdate(req.params.id, person, { new: true, runValidators: true, context: 'query' } )
     .then(updatedPerson => {
-      console.log("updatedPerson", updatedPerson)
       res.json(updatedPerson)
     })
     .catch(err => next(err) )
 })
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
   const id = req.params.id.toString()
   Person.findByIdAndRemove(id)
     .then(result => {
       res.status(204).end()
     })
-    .catch(err => console.log(err))
+    .catch(err => next(err))
   res.status(204).end()
 })
 
@@ -101,8 +99,6 @@ app.post('/api/persons', (req, res, next) => {
 })
 
 const errorHandler = (error, req, res, next) => {
-  console.error(`Error name: ${error.name}`)
-  console.error(`Error message: ${error.message}`)
   if (error && error.name == "CastError") {
     return res.status(400).send({error: 'malformed id'})
   }
