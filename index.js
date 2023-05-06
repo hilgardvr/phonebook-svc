@@ -10,7 +10,7 @@ app.use(express.json())
 app.use(express.static('build'))
 app.use(morgan(function (tokens, req, res) {
   const method = req.method
-  const body = req.method === "POST" ? JSON.stringify(req.body) : ""
+  const body = method === "POST" ? JSON.stringify(req.body) : ""
   return [
     tokens.method(req, res),
     tokens.url(req, res),
@@ -33,7 +33,7 @@ app.get('/api/persons', (req, res, next) => {
 
 app.get('/info', (req, res, next) => {
   const date = new Date()
-  const length = Person.find({})
+  Person.find({})
     .then(persons => {
         res.send(`
           <p>Phonebook has info for ${persons.length} people</p>
@@ -74,7 +74,7 @@ app.put('/api/persons/:id', (req, res, next) => {
 app.delete('/api/persons/:id', (req, res, next) => {
   const id = req.params.id.toString()
   Person.findByIdAndRemove(id)
-    .then(result => {
+    .then(() => {
       res.status(204).end()
     })
     .catch(err => next(err))
